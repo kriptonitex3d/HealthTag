@@ -1,0 +1,27 @@
+{
+	"schemaVersion": 1,
+	"id": "helthtag",
+	"version": "${version}",
+	"name": "Health Tag",
+	"description": "Shows player health below name tags.",
+	"authors": [
+		"kriptonitex3d"
+	],
+	"contact": {},
+	"license": "MIT",
+	"icon": "assets/helthtag/icon.png",
+	"environment": "client",
+	"entrypoints": {
+		"client": [
+			"com.kriptonitex3d.helthtag.HelthtagClient"
+		]
+	},
+	"mixins": [
+		"helthtag.client.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=${loader_version}",
+		"minecraft": "${minecraft_version}",
+		"java": ">=${java_version}"
+	}
+}

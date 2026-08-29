@@ -1,0 +1,67 @@
+plugins {
+	id "fabric-loom" version "${loom_version}"
+	id "maven-publish"
+}
+
+version = project.mod_version
+group = project.maven_group
+
+def customBuildDir = project.findProperty("custom_build_dir")
+layout.buildDirectory = file(customBuildDir != null ? customBuildDir.toString() : "build-${project.minecraft_version}")
+
+base {
+	archivesName = project.archives_base_name
+}
+
+loom {
+	splitEnvironmentSourceSets()
+
+	mods {
+		"helthtag" {
+			sourceSet sourceSets.main
+			sourceSet sourceSets.client
+		}
+	}
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	mappings loom.officialMojangMappings()
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+}
+
+processResources {
+	inputs.property "version", project.version
+	inputs.property "minecraft_version", project.minecraft_version
+	inputs.property "loader_version", project.loader_version
+	inputs.property "java_version", project.java_version
+
+	filesMatching("fabric.mod.json") {
+		expand(
+			"version": project.version,
+			"minecraft_version": project.minecraft_version,
+			"loader_version": project.loader_version,
+			"java_version": project.java_version
+		)
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	options.release = project.java_version.toInteger()
+}
+
+java {
+	withSourcesJar()
+
+	sourceCompatibility = JavaVersion.toVersion(project.java_version)
+	targetCompatibility = JavaVersion.toVersion(project.java_version)
+}
+
+publishing {
+	publications {
+		create("mavenJava", MavenPublication) {
+			artifactId = project.archives_base_name
+			from components.java
+		}
+	}
+}
